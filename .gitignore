@@ -8,6 +8,9 @@ test-output
 coverage
 *.tsbuildinfo
 
+# Packaged release artifacts (produced by tools/package-release.mjs in CI)
+release
+
 # Nx
 .nx/cache
 .nx/workspace-data

@@ -1,0 +1,65 @@
+name: Release
+
+# Deliberate, manual release. Reads the version from libs/plugin/package.json
+# (single source of truth), verifies the content-hash seal, packages the
+# GitHub-Release zip + sha256, and creates the `v<version>` release (which also
+# creates the tag). Idempotent: a re-run for an already-released version is a
+# no-op. Consumers then acquire it with `dxdz plugins-add --github <this-repo>`.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - run: bun install --frozen-lockfile
+
+      - name: Resolve version
+        id: v
+        run: echo "version=$(jq -r .version libs/plugin/package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if already released (idempotent)
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.v.outputs.version }}" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::v${{ steps.v.outputs.version }} is already released — nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The content-hash seal must be in sync — never publish drifted source.
+      - name: Seal gate
+        if: steps.guard.outputs.exists == 'false'
+        run: bun run plugins:verify
+
+      - name: Package release artifact
+        if: steps.guard.outputs.exists == 'false'
+        run: bun run package:release
+
+      - name: Create GitHub Release
+        if: steps.guard.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.v.outputs.version }}" \
+            --repo "${{ github.repository }}" \
+            --title "v${{ steps.v.outputs.version }}" \
+            --notes "\`@dxdz/plugin-broadcom-ad-tdm\` v${{ steps.v.outputs.version }}. Acquire from a flow repo with: \`dxdz plugins-add --github ${{ github.repository }}\`." \
+            release/${{ github.event.repository.name }}-v${{ steps.v.outputs.version }}.zip \
+            release/${{ github.event.repository.name }}-v${{ steps.v.outputs.version }}.zip.sha256

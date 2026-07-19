@@ -23,9 +23,14 @@
     "typecheck": "bunx nx run-many -t typecheck",
     "prebuild": "bun tools/prebuild-audit.mjs",
     "scripts:lint": "bun tools/lint-scripts.mjs",
+    "plugins:hash": "bun tools/plugins-hash.mjs",
+    "plugins:bump": "bun tools/plugins-bump.mjs",
+    "plugins:verify": "bun tools/plugins-verify.mjs",
+    "package:release": "bun tools/package-release.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
+    "fflate": "^0.8.2",
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@nx/eslint": "22.7.2",
