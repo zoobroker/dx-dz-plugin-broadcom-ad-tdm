@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Build output (the plugin bundle is a build artifact; the release zip ships it)
+dist
+out-tsc
+test-output
+coverage
+*.tsbuildinfo
+
+# Nx
+.nx/cache
+.nx/workspace-data
+
+# Environment files — never commit secrets
+.env
+*.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.idea
+*.log
+/.tmp/

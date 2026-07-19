@@ -1,0 +1,36 @@
+{
+  "name": "@dxdz/plugin-broadcom-ad-tdm",
+  "root": "libs/plugin",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.ts",
+        "!{projectRoot}/src/**/*.spec.ts",
+        "{projectRoot}/package.json",
+        "{projectRoot}/plugin.json",
+        "{workspaceRoot}/tools/bundle-plugin.mjs"
+      ],
+      "outputs": ["{projectRoot}/dist/index.js"],
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "bun tools/bundle-plugin.mjs libs/plugin"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.ts",
+        "{projectRoot}/tsconfig.json",
+        "{workspaceRoot}/tsconfig.base.json"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "tsc --noEmit -p libs/plugin/tsconfig.json"
+      }
+    }
+  }
+}

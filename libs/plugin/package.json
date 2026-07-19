@@ -1,0 +1,25 @@
+{
+  "name": "@dxdz/plugin-broadcom-ad-tdm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    "./plugin.json": "./plugin.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@bims-ad/tdm-client": "^0.1.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@dx-dz/plugin-sdk": "^0.0.2"
+  }
+}
