@@ -1,6 +1,6 @@
 {
   "name": "@dxdz/plugin-broadcom-ad-tdm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Broadcom TDM (Test Data Manager) operators for dx-dz.",
   "entrypoint": "dist/index.js",
   "operators": [
