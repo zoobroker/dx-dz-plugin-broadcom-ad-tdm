@@ -1,8 +1,14 @@
 {
   "name": "@dxdz/plugin-broadcom-ad-tdm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Broadcom TDM (Test Data Manager) operators for dx-dz.",
   "entrypoint": "dist/index.js",
-  "operators": [{ "operatorId": "echo", "exportName": "echoOperator" }],
+  "operators": [
+    { "operatorId": "list-jobs", "exportName": "listJobsOperator" },
+    { "operatorId": "get-job", "exportName": "getJobOperator" },
+    { "operatorId": "list-projects", "exportName": "listProjectsOperator" },
+    { "operatorId": "get-project", "exportName": "getProjectOperator" },
+    { "operatorId": "list-generators", "exportName": "listGeneratorsOperator" }
+  ],
   "migrations": []
 }

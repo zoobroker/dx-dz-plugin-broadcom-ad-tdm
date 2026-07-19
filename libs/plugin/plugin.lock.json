@@ -1,5 +1,5 @@
 {
   "$comment": "Sealed by `bun run plugins:bump` (P3 content-hash drift gate). Do not hand-edit.",
-  "version": "0.1.0",
-  "contentHash": "sha256-e1e47dfb439bab8a5e42325f65ec67466e1bcdca9eedaa5293db4c35878e8e5b"
+  "version": "0.2.0",
+  "contentHash": "sha256-4f1aed87237f389ef9ff00d393784dcf4cbf7ad28e86067ff0a08f023660a3aa"
 }
