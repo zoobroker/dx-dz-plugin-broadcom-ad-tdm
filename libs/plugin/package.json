@@ -16,7 +16,7 @@
     }
   },
   "dependencies": {
-    "@bims-ad/tdm-client": "^0.1.0",
+    "@bims-ad/tdm-client": "^0.1.2",
     "zod": "^4.0.0"
   },
   "devDependencies": {
