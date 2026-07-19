@@ -44,13 +44,15 @@ describe('listJobsOperator', () => {
     const res = await listJobsOperator.execute!(fakeCtx() as any, undefined, {
       connection: CONFIG,
       total: 50,
+      sort: 'id',
+      order: 'desc',
       origin: '',
       projectId: '',
       type: '',
     });
 
     expect(getTdmSession).toHaveBeenCalledWith(CONFIG);
-    expect(recent).toHaveBeenCalledWith({ total: 50 });
+    expect(recent).toHaveBeenCalledWith({ total: 50, sort: 'id', order: 'desc' });
     expect(res).toEqual({ port: 'out', data: [{ jobId: 3 }, { jobId: 2 }] });
   });
 
@@ -63,12 +65,19 @@ describe('listJobsOperator', () => {
     await listJobsOperator.execute!(fakeCtx() as any, undefined, {
       connection: CONFIG,
       total: 200,
+      sort: 'name',
+      order: 'asc',
       origin: 'flow_origin',
       projectId: '42',
       type: '',
     });
 
     expect(jobFilter).toHaveBeenCalledWith({ origin: 'flow_origin', projectId: 42 });
-    expect(recent).toHaveBeenCalledWith({ total: 200, q: '(origin=flow_origin)+(projectId=42)' });
+    expect(recent).toHaveBeenCalledWith({
+      total: 200,
+      sort: 'name',
+      order: 'asc',
+      q: '(origin=flow_origin)+(projectId=42)',
+    });
   });
 });

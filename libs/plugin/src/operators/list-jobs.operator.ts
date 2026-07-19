@@ -17,6 +17,11 @@ import { renderTemplate } from '../templating.js';
 const ListJobsConfigSchema = z.object({
   connection: z.string().default(''),
   total: z.number().int().positive().default(200),
+  // An unset/cleared select serializes ''; coerce to the default so the enum
+  // never sees an invalid member. Only `id` (jobId) + `name` sort reliably
+  // server-side — timestamps sort only to ~minute precision (id as tiebreak).
+  sort: z.preprocess((v) => (v === '' ? 'id' : v), z.enum(['id', 'name'])).default('id'),
+  order: z.preprocess((v) => (v === '' ? 'desc' : v), z.enum(['asc', 'desc'])).default('desc'),
   origin: z.string().default(''),
   projectId: z.string().default(''),
   type: z.string().default(''),
@@ -38,7 +43,7 @@ export const listJobsOperator: OperatorBehavior<ListJobsConfig, unknown, unknown
   },
 
   configSchema: ListJobsConfigSchema,
-  configDefaults: { total: 200 },
+  configDefaults: { total: 200, sort: 'id', order: 'desc' },
   configForm: {
     sections: [
       { id: 'connection', title: 'Connection', fields: [connectionField] },
@@ -50,8 +55,32 @@ export const listJobsOperator: OperatorBehavior<ListJobsConfig, unknown, unknown
             key: 'total',
             label: 'Max jobs',
             widget: 'number',
-            hint: 'How many of the newest jobs to return (paged + deduped). Size above a period’s volume for watermark discovery.',
+            hint: 'How many jobs to return (paged + deduped). Size above a period’s volume for watermark discovery.',
             widgetOptions: { min: 1 },
+          },
+          {
+            key: 'sort',
+            label: 'Sort by',
+            widget: 'select',
+            hint: 'Field the server sorts on. Only `id` (jobId) and `name` sort reliably — timestamps sort coarsely (~minute, id as tiebreak).',
+            widgetOptions: {
+              options: [
+                { value: 'id', label: 'Job id' },
+                { value: 'name', label: 'Name' },
+              ],
+            },
+          },
+          {
+            key: 'order',
+            label: 'Order',
+            widget: 'select',
+            hint: 'Sort direction.',
+            widgetOptions: {
+              options: [
+                { value: 'desc', label: 'Descending (newest first)' },
+                { value: 'asc', label: 'Ascending' },
+              ],
+            },
           },
           {
             key: 'origin',
@@ -96,6 +125,8 @@ export const listJobsOperator: OperatorBehavior<ListJobsConfig, unknown, unknown
 
     const jobs = await createJobsApi(session.clients).recent({
       total: config.total,
+      sort: config.sort,
+      order: config.order,
       ...(q ? { q } : {}),
     });
 
