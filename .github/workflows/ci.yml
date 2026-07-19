@@ -26,6 +26,10 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # Content-hash drift gate: shipped source must match the sealed
+      # plugin.lock.json version (bump + re-seal with `bun run plugins:bump`).
+      - run: bun run plugins:verify
+
       # Single project → run-many covers everything (typecheck, lint, test, build).
       - run: bunx nx run-many -t typecheck lint test build
 
